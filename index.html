@@ -3,30 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PGIMER Articulation - Global ID Mode</title>
+    <title>PGIMER Articulation - Max Visibility</title>
     <style>
         :root { --primary: #0284c7; --bg: #f8fafc; --text: #0f172a; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
-        .container { width: 100%; max-width: 450px; background: #fff; padding: 20px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 5px; display: flex; flex-direction: column; align-items: center; }
         
-        /* Persistent Metadata Header */
-        .session-info { font-size: 0.75rem; color: #64748b; background: #f1f5f9; padding: 10px; border-radius: 12px; margin-bottom: 15px; width: 100%; text-align: center; border: 1px solid #e2e8f0; display: none; }
+        .container { width: 100%; max-width: 600px; background: #fff; padding: 15px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); box-sizing: border-box; }
         
-        /* Registration form - only on first page */
-        .registration-box { background: #f1f5f9; padding: 15px; border-radius: 18px; margin-bottom: 20px; border: 2px solid var(--primary); }
-        .meta-input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
+        .session-info { font-size: 0.85rem; color: #64748b; background: #f1f5f9; padding: 12px; border-radius: 12px; margin-bottom: 10px; width: 100%; text-align: center; border: 1px solid #e2e8f0; font-weight: bold; display: none; box-sizing: border-box; }
         
-        .stimulus-box { width: 100%; height: 260px; background: #f8fafc; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 15px; border: 1px dashed #cbd5e1; overflow: hidden; }
-        .stimulus-image { max-width: 85%; max-height: 70%; object-fit: contain; }
-        .target-word { font-size: 2.3rem; font-weight: 800; margin-top: 10px; color: var(--primary); }
-        .header-card { font-size: 3rem; font-weight: 900; color: #ef4444; }
+        .registration-box { background: #f1f5f9; padding: 20px; border-radius: 18px; margin-bottom: 15px; border: 2.5px solid var(--primary); }
+        .meta-input { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 10px; box-sizing: border-box; font-size: 1.1rem; }
         
-        .btn-record { background: #ef4444; color: white; width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; }
+        /* INCREASED IMAGE CONTAINER SIZE */
+        .stimulus-box { width: 100%; height: 420px; background: #f8fafc; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 15px; border: 2px solid #e2e8f0; overflow: hidden; }
+        
+        /* MAXIMIZED IMAGE DIMENSIONS */
+        .stimulus-image { width: 95%; height: 80%; object-fit: contain; transition: transform 0.2s; }
+        
+        .target-word { font-size: 3.2rem; font-weight: 900; margin-top: 5px; color: var(--primary); letter-spacing: -1px; }
+        .header-card { font-size: 3.5rem; font-weight: 900; color: #ef4444; text-align: center; line-height: 1.2; padding: 20px; }
+        
+        .btn-record { background: #ef4444; color: white; width: 100%; padding: 20px; border-radius: 18px; border: none; font-size: 1.3rem; font-weight: 800; cursor: pointer; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
         .recording { background: #991b1b !important; animation: pulse 1.5s infinite; }
-        .review-panel { background: #f0fdf4; border: 2px solid #10b981; padding: 15px; border-radius: 18px; display: none; margin-top: 15px; }
-        .soda-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 10px 0; }
-        .soda-btn { background: white; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; font-size: 0.85rem; text-align: center; cursor: pointer; }
-        .soda-btn.selected { background: var(--primary); color: white; }
+        
+        .nav-row { display: flex; gap: 12px; width: 100%; margin-bottom: 15px; }
+        .nav-btn { flex: 1; background: #f1f5f9; border: 2px solid #cbd5e1; padding: 15px; border-radius: 15px; font-weight: 800; font-size: 1rem; color: #475569; cursor: pointer; }
+        
+        .review-panel { background: #f0fdf4; border: 2px solid #10b981; padding: 20px; border-radius: 22px; display: none; margin-top: 15px; }
+        .soda-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0; }
+        .soda-btn { background: white; border: 1.5px solid #cbd5e1; padding: 14px; border-radius: 12px; font-size: 0.95rem; font-weight: 700; text-align: center; cursor: pointer; }
+        .soda-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
         
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     </style>
@@ -36,32 +43,31 @@
 <div class="container">
     <div id="sessionDisplay" class="session-info"></div>
 
-    <div style="text-align:center; font-size:0.75rem; font-weight:bold; color:#64748b; margin-bottom:10px;" id="counter">ITEM 1 / 113</div>
+    <div style="text-align:center; font-size:0.9rem; font-weight:900; color:#94a3b8; margin-bottom:8px;" id="counter">ITEM 1 / 113</div>
 
     <div class="stimulus-box" id="mainDisplay">
         <div id="regForm" class="registration-box">
-            <span style="font-size: 0.8rem; font-weight: 800; color: var(--primary);">NEW PATIENT REGISTRATION</span>
+            <div style="font-size: 1rem; font-weight: 900; color: var(--primary); margin-bottom: 10px; text-align: center;">PATIENT REGISTRATION</div>
             <input type="text" id="pName" class="meta-input" placeholder="Patient Name (Mandatory)">
             <div style="display:flex; gap:10px;">
-                <input type="text" id="pAge" class="meta-input" placeholder="Age">
+                <input type="text" id="pAge" class="meta-input" placeholder="Age (e.g. 6Y)">
                 <select id="pGender" class="meta-input"><option value="M">Male</option><option value="F">Female</option></select>
             </div>
-            <p style="font-size:0.65rem; color:#64748b; margin:5px 0 0 0;">*Details will apply to all 112 stimuli.</p>
         </div>
         
         <img id="displayImg" src="" class="stimulus-image" style="display:none;">
         <div id="displayText" class="target-word"></div>
     </div>
 
-    <div style="display:flex; gap:10px; width:100%; margin-bottom:15px;">
-        <button class="soda-btn" style="flex:1" onclick="changeItem(-1)">PREV</button>
-        <button class="soda-btn" style="flex:1" onclick="changeItem(1)">NEXT</button>
+    <div class="nav-row">
+        <button class="nav-btn" onclick="changeItem(-1)">← PREV</button>
+        <button class="nav-btn" onclick="changeItem(1)">NEXT →</button>
     </div>
 
     <button id="recordBtn" class="btn-record" style="display:none;" onclick="handleRecording()">🎙️ RECORD SAMPLE</button>
 
     <div id="reviewPanel" class="review-panel">
-        <button class="soda-btn" style="width:100%; background:#0f172a; color:white; margin-bottom:10px;" onclick="playCurrent()">▶️ PREVIEW</button>
+        <button class="soda-btn" style="width:100%; background:#0f172a; color:white; font-size: 1.1rem; padding: 18px;" onclick="playCurrent()">▶️ LISTEN TO SAMPLE</button>
         <div class="soda-grid">
             <div class="soda-btn" onclick="setLabel('Normal', this)">Normal</div>
             <div class="soda-btn" onclick="setLabel('Substitution', this)">Substitution</div>
@@ -69,7 +75,7 @@
             <div class="soda-btn" onclick="setLabel('Distortion', this)">Distortion</div>
             <div class="soda-btn" onclick="setLabel('Addition', this)">Addition</div>
         </div>
-        <button class="btn-record" style="background:#10b981; margin:0;" onclick="finalizeSave()">💾 SAVE SAMPLE</button>
+        <button class="btn-record" style="background:#10b981; margin:0; padding: 18px;" onclick="finalizeSave()">💾 SAVE & CONTINUE</button>
     </div>
 </div>
 
@@ -138,7 +144,6 @@
     let currentIdx = 0, mediaRecorder, chunks = [], currentBlob = null, currentLabel = "NotLabeled";
     let audioCtx, streamSource, biquadFilter;
 
-    // Logic for Mandatory Check and Auto-Filling
     function checkMetadata() {
         const name = document.getElementById('pName').value.trim();
         const age = document.getElementById('pAge').value.trim();
@@ -147,14 +152,13 @@
 
         if (name !== "") {
             display.style.display = "block";
-            display.textContent = `ACTIVE SESSION: ${name} (${age || 'N/A'}, ${gender})`;
+            display.textContent = `SESSION: ${name} | ${age || '?'}, ${gender}`;
             return true;
         }
         return false;
     }
 
     function changeItem(step) {
-        // Only allow moving forward if name is filled
         if (step > 0 && currentIdx === 0 && !checkMetadata()) {
             alert("Mandatory: Please enter Patient Name to begin.");
             return;
@@ -171,19 +175,17 @@
         const reg = document.getElementById('regForm');
         
         if (currentIdx === 0) {
-            reg.style.display = "block";
-            dImg.style.display = "none";
+            reg.style.display = "block"; dImg.style.display = "none";
             dTxt.innerHTML = `<span class="header-card">${item.word}</span>`;
             rBtn.style.display = "none";
         } else if (item.type === "header") {
-            reg.style.display = "none";
-            dImg.style.display = "none";
+            reg.style.display = "none"; dImg.style.display = "none";
             dTxt.innerHTML = `<span class="header-card">${item.word}</span>`;
             rBtn.style.display = "none";
         } else {
-            reg.style.display = "none";
-            dImg.style.display = "block"; dImg.src = item.img;
-            dTxt.textContent = item.word; rBtn.style.display = "block";
+            reg.style.display = "none"; dImg.style.display = "block"; 
+            dImg.src = item.img; dTxt.textContent = item.word; 
+            rBtn.style.display = "block";
         }
         
         document.getElementById('counter').textContent = `ITEM ${currentIdx + 1} / ${assessmentList.length}`;
@@ -200,8 +202,7 @@
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 48000 });
                 streamSource = audioCtx.createMediaStreamSource(stream);
                 biquadFilter = audioCtx.createBiquadFilter();
-                biquadFilter.type = "highpass";
-                biquadFilter.frequency.value = 80; 
+                biquadFilter.type = "highpass"; biquadFilter.frequency.value = 80; 
 
                 const dest = audioCtx.createMediaStreamDestination();
                 streamSource.connect(biquadFilter).connect(dest);
@@ -209,37 +210,4 @@
                 mediaRecorder = new MediaRecorder(dest.stream);
                 chunks = [];
                 mediaRecorder.ondataavailable = e => chunks.push(e.data);
-                mediaRecorder.onstop = () => { currentBlob = new Blob(chunks, { type: 'audio/wav' }); document.getElementById('reviewPanel').style.display = 'block'; };
-
-                mediaRecorder.start();
-                document.getElementById('recordBtn').classList.add('recording');
-                document.getElementById('recordBtn').textContent = "⏹️ STOP RECORDING";
-                document.getElementById('reviewPanel').style.display = 'none';
-            } catch (err) { alert("Mic Access Error: " + err.message); }
-        } else {
-            mediaRecorder.stop();
-            audioCtx.close();
-            document.getElementById('recordBtn').classList.remove('recording');
-            document.getElementById('recordBtn').textContent = "🎙️ RECORD SAMPLE";
-        }
-    }
-
-    function setLabel(l, b) { currentLabel = l; document.querySelectorAll('.soda-btn').forEach(x => x.classList.remove('selected')); b.classList.add('selected'); }
-    function playCurrent() { if(currentBlob) new Audio(URL.createObjectURL(currentBlob)).play(); }
-
-    function finalizeSave() {
-        const name = document.getElementById('pName').value.replace(/\s+/g, '_');
-        const age = document.getElementById('pAge').value || 'NA';
-        const gender = document.getElementById('pGender').value;
-        const date = new Date().toISOString().split('T')[0];
-        
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(currentBlob);
-        link.download = `${name}_${age}_${gender}_${assessmentList[currentIdx].word}_${currentLabel}_${date}.wav`;
-        link.click();
-    }
-
-    window.onload = updateUI;
-</script>
-</body>
-</html>
+                mediaRecorder.onstop

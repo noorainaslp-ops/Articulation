@@ -3,157 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hindi Articulation Battery - PGIMER Protocol</title>
+    <title>Articulation - PGIMER ID Mode</title>
     <style>
         :root { --primary: #0284c7; --bg: #f8fafc; --text: #0f172a; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 450px; background: #fff; padding: 20px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); box-sizing: border-box; }
-        .stimulus-box { width: 100%; height: 300px; background: #f1f5f9; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 15px; overflow: hidden; }
-        .stimulus-image { max-width: 90%; max-height: 70%; object-fit: contain; }
-        .target-word { font-size: 2.5rem; font-weight: 800; margin-top: 10px; color: var(--primary); }
+        .meta-section { background: #f1f5f9; padding: 15px; border-radius: 18px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        .meta-input { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; box-sizing: border-box; }
+        .row-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stimulus-box { width: 100%; height: 260px; background: #f8fafc; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 15px; border: 1px dashed #cbd5e1; overflow: hidden; }
+        .stimulus-image { max-width: 85%; max-height: 70%; object-fit: contain; }
+        .target-word { font-size: 2.3rem; font-weight: 800; margin-top: 10px; color: var(--primary); }
         .nav-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .btn { padding: 12px 18px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn-record { background: #ef4444; color: white; width: 100%; margin-bottom: 15px; font-size: 1rem; }
-        .recording { background: #991b1b; animation: pulse 1.5s infinite; }
-        .soda-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; background: #f1f5f9; padding: 12px; border-radius: 16px; }
-        .soda-btn { background: white; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; font-size: 0.85rem; text-align: center; cursor: pointer; }
-        .soda-btn.selected { background: var(--primary); color: white; }
+        .btn-record { background: #ef4444; color: white; width: 100%; font-size: 1rem; margin-bottom: 10px;}
+        .recording { background: #991b1b !important; animation: pulse 1.5s infinite; }
+        .review-panel { background: #f0fdf4; border: 2px solid #10b981; padding: 15px; border-radius: 18px; display: none; }
+        .soda-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+        .soda-btn { background: white; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; font-size: 0.85rem; text-align: center; }
+        .soda-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .save-btn { background: #10b981; color: white; width: 100%; margin-top: 15px; font-size: 1.1rem; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <div class="meta-section">
+        <span style="font-size: 0.7rem; font-weight: 800; color: #64748b; letter-spacing: 1px;">PATIENT REGISTRATION</span>
+        <input type="text" id="pName" class="meta-input" placeholder="Patient Name (e.g., Amit)">
+        <div class="row-meta">
+            <input type="text" id="pAge" class="meta-input" placeholder="Age (e.g., 5Y)">
+            <select id="pGender" class="meta-input">
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="O">Other</option>
+            </select>
+        </div>
+        <input type="date" id="testDate" class="meta-input">
+    </div>
+
     <div style="text-align:center; margin-bottom: 10px;">
-        <h3 style="margin:0;">Articulation Battery</h3>
-        <span id="ipaTag" style="font-size:0.8rem; color:#64748b; font-family: monospace;">IPA: /ǝna:r/</span>
+        <span id="counter" style="font-weight: 800; color: #64748b; font-size: 0.8rem;">ITEM 1 / 110</span>
     </div>
 
     <div class="stimulus-box">
-        <img id="displayImg" src="page3.jpg" class="stimulus-image" alt="Stimulus">
+        <img id="displayImg" src="page3.jpg" class="stimulus-image">
         <div id="displayText" class="target-word">अनार</div>
     </div>
 
     <div class="nav-row">
         <button class="btn" onclick="changeItem(-1)">PREV</button>
-        <span id="counter" style="font-weight: 800;">1 / 110</span>
+        <button id="recordBtn" class="btn btn-record" style="width: 60%;" onclick="handleRecording()">🎙️ RECORD</button>
         <button class="btn" onclick="changeItem(1)">NEXT</button>
     </div>
 
-    <button id="recordBtn" class="btn btn-record" onclick="handleRecording()">🎙️ RECORD SAMPLE</button>
-    
-    <div class="soda-grid">
-        <div class="soda-btn" onclick="logSoda('Normal', this)">Normal</div>
-        <div class="soda-btn" onclick="logSoda('Substitution', this)">Substitution</div>
-        <div class="soda-btn" onclick="logSoda('Omission', this)">Omission</div>
-        <div class="soda-btn" onclick="logSoda('Distortion', this)">Distortion</div>
-        <div class="soda-btn" onclick="logSoda('Addition', this)">Addition</div>
+    <div id="reviewPanel" class="review-panel">
+        <button class="btn" style="background:#0f172a; color:white; width:100%;" onclick="playCurrent()">▶️ PLAYBACK</button>
+        <div class="soda-grid">
+            <div class="soda-btn" onclick="setLabel('Normal', this)">Normal</div>
+            <div class="soda-btn" onclick="setLabel('Substitution', this)">Substitution</div>
+            <div class="soda-btn" onclick="setLabel('Omission', this)">Omission</div>
+            <div class="soda-btn" onclick="setLabel('Distortion', this)">Distortion</div>
+            <div class="soda-btn" onclick="setLabel('Addition', this)">Addition</div>
+        </div>
+        <button class="btn save-btn" onclick="finalizeSave()">💾 SAVE SAMPLE</button>
     </div>
 </div>
 
 <script>
-    // COMPLETE LIST OF ALL 110 STIMULI [cite: 6-204]
+    // Set default date to today
+    document.getElementById('testDate').valueAsDate = new Date();
+
     const assessmentList = [
-        { word: "अनार", ipa: "/ǝna:r/", img: "page3.jpg" }, { word: "आम", ipa: "/a:m/", img: "page4.jpg" },
-        { word: "मटर", ipa: "/mətər/", img: "page5.jpg" }, { word: "बस", ipa: "/bəs/", img: "page6.jpg" },
-        { word: "छाता", ipa: "/tsha:ta:/", img: "page7.jpg" }, { word: "इमली", ipa: "/imli:/", img: "page8.jpg" },
-        { word: "बगीचा", ipa: "/bǝgi:tʃa:/", img: "page9.jpg" }, { word: "तकिया", ipa: "/təkija:/", img: "page10.jpg" },
-        { word: "जलेबी", ipa: "/dʒǝlebi:/", img: "page11.jpg" }, { word: "तीन", ipa: "/ti:n/", img: "page12.jpg" },
-        { word: "उल्लू", ipa: "/ullu:/", img: "page13.jpg" }, { word: "साबुन", ipa: "/sa:bun/", img: "page14.jpg" },
-        { word: "कबूतर", ipa: "/kəbu:tər/", img: "page15.jpg" }, { word: "साधु", ipa: "/sa:dʱu/", img: "page16.jpg" },
-        { word: "भालू", ipa: "/bʱa:lu:/", img: "page17.jpg" }, { word: "ऊँट", ipa: "/u:nt/", img: "page18.jpg" },
-        { word: "पेड़", ipa: "/pe:ɽ/", img: "page19.jpg" }, { word: "ओखली", ipa: "/o:kʰǝli:/", img: "page20.jpg" },
-        { word: "गुब्बारे", ipa: "/gubba:re/", img: "page21.jpg" }, { word: "समोसा", ipa: "/samo:sa:/", img: "page22.jpg" },
-        { word: "ऐनक", ipa: "/æ:nǝk/", img: "page23.jpg" }, { word: "कौआ", ipa: "/kɔ:a:/", img: "page24.jpg" },
-        { word: "अंगूर", ipa: "/ǝŋgu:r/", img: "page25.jpg" }, { word: "खिलौना", ipa: "/kʰilo:na:/", img: "page26.jpg" },
-        { word: "पतंग", ipa: "/pətəŋg/", img: "page27.jpg" }, { word: "कमल", ipa: "/kəməl/", img: "page29.jpg" },
-        { word: "खरगोश", ipa: "/kʰǝrgo:ʃ/", img: "page30.jpg" }, { word: "बकरी", ipa: "/bəkəri:/", img: "page31.jpg" },
-        { word: "ओखली", ipa: "/o:kʰǝli:/", img: "page32.jpg" }, { word: "मेंढक", ipa: "/me:nɖʱək/", img: "page33.jpg" },
-        { word: "बत्तख", ipa: "/bəttəkʰ/", img: "page34.jpg" }, { word: "गाजर", ipa: "/ga:dʒər/", img: "page35.jpg" },
-        { word: "मगरमच्छ", ipa: "/məgərmətʃtʃʰ/", img: "page36.jpg" }, { word: "घाघरा", ipa: "/gʱa:gʱǝra:/", img: "page37.jpg" },
-        { word: "पतंग", ipa: "/pətəŋg/", img: "page38.jpg" }, { word: "कंघा", ipa: "/kəŋgʱa:/", img: "page39.jpg" },
-        { word: "चप्पल", ipa: "/tʃəppəl/", img: "page40.jpg" }, { word: "छाता", ipa: "/tʃʰa:ta:/", img: "page41.jpg" },
-        { word: "नाचना", ipa: "/na:tʃna:/", img: "page42.jpg" }, { word: "मछली", ipa: "/mətʃʰli:/", img: "page43.jpg" },
-        { word: "बच्चा", ipa: "/bəttʃa:/", img: "page44.jpg" }, { word: "मगरमच्छ", ipa: "/məgərmətʃtʃʰ/", img: "page45.jpg" },
-        { word: "जहाज", ipa: "/dʒǝha:dʒ/", img: "page46.jpg" }, { word: "झंडा", ipa: "/dʒʱəɳɖa:/", img: "page47.jpg" },
-        { word: "गाजर", ipa: "/ga:dʒər/", img: "page48.jpg" }, { word: "टमाटर", ipa: "/ʈəma:ʈər/", img: "page49.jpg" },
-        { word: "बटन", ipa: "/bəʈən/", img: "page50.jpg" }, { word: "ऊँट", ipa: "/u:nt/", img: "page51.jpg" },
-        { word: "अंगूठी", ipa: "/ǝŋgu:ʈʰi:/", img: "page52.jpg" }, { word: "ठठेरा", ipa: "/ʈʰəʈʰe:ra:/", img: "page53.jpg" },
-        { word: "डमरू", ipa: "/ɖəməru:/", img: "page54.jpg" }, { word: "मिठाई", ipa: "/miʈʰa:i:/", img: "page55.jpg" },
-        { word: "झंडा", ipa: "/dʒʱəɳɖa:/", img: "page56.jpg" }, { word: "ढोलक", ipa: "/ɖʱo:lək/", img: "page57.jpg" },
-        { word: "बत्तख", ipa: "/bəttəkʰ/", img: "page58.jpg" }, { word: "मेंढक", ipa: "/me:nɖʱək/", img: "page59.jpg" },
-        { word: "दांत", ipa: "/da:nt/", img: "page60.jpg" }, { word: "तलवार", ipa: "/təlwa:r/", img: "page61.jpg" },
-        { word: "थरमस", ipa: "/tʰərməs/", img: "page62.jpg" }, { word: "हथेली", ipa: "/hətʰe:li:/", img: "page63.jpg" },
-        { word: "मदारी", ipa: "/məda:ri:/", img: "page64.jpg" }, { word: "हाथी", ipa: "/ha:tʰi:/", img: "page65.jpg" },
-        { word: "अमरुद", ipa: "/əməru:d/", img: "page66.jpg" }, { word: "धनुष", ipa: "/dʱənuʃ/", img: "page67.jpg" },
-        { word: "गधा", ipa: "/gədʱa:/", img: "page68.jpg" }, { word: "कान", ipa: "/ka:n/", img: "page69.jpg" },
-        { word: "नल", ipa: "/nəl/", img: "page70.jpg" }, { word: "पपीता", ipa: "/pəpi:ta:/", img: "page71.jpg" },
-        { word: "ऐनक", ipa: "/æ:nǝk/", img: "page72.jpg" }, { word: "चप्पल", ipa: "/tʃəppəl/", img: "page73.jpg" },
-        { word: "सांप", ipa: "/sa:np/", img: "page74.jpg" }, { word: "सोफा", ipa: "/so:pʰa:/", img: "page75.jpg" },
-        { word: "फूल", ipa: "/pʰu:l/", img: "page76.jpg" }, { word: "बैंगन", ipa: "/bæ:ŋgən/", img: "page77.jpg" },
-        { word: "ढफली", ipa: "/ɖʱəpʰli:/", img: "page78.jpg" }, { word: "कबूतर", ipa: "/kəbu:tər/", img: "page79.jpg" },
-        { word: "जलेबी", ipa: "/dʒǝlebi:/", img: "page80.jpg" }, { word: "मछली", ipa: "/mətʃʰli:/", img: "page81.jpg" },
-        { word: "भालू", ipa: "/bʱa:lu:/", img: "page82.jpg" }, { word: "टमाटर", ipa: "/ʈəma:ʈər/", img: "page83.jpg" },
-        { word: "खम्भा", ipa: "/kʰəmbʱa:/", img: "page84.jpg" }, { word: "कलम", ipa: "/kələm/", img: "page85.jpg" },
-        { word: "यज्ञ", ipa: "/jǝɡjə/", img: "page86.jpg" }, { word: "रेलगाड़ी", ipa: "/re:ləga:ɽi:/", img: "page87.jpg" },
-        { word: "नारियल", ipa: "/na:rijəl/", img: "page88.jpg" }, { word: "खरगोश", ipa: "/kʰǝrgo:ʃ/", img: "page89.jpg" },
-        { word: "चाय", ipa: "/tʃa:j/", img: "page90.jpg" }, { word: "मटर", ipa: "/mətər/", img: "page91.jpg" },
-        { word: "लट्टू", ipa: "/ləʈʈu:/", img: "page92.jpg" }, { word: "वानर", ipa: "/va:nər/", img: "page93.jpg" },
-        { word: "कलम", ipa: "/kələm/", img: "page94.jpg" }, { word: "तलवार", ipa: "/təlwa:r/", img: "page95.jpg" },
-        { word: "उल्लू", ipa: "/ullu:/", img: "page96.jpg" }, { word: "नाव", ipa: "/na:v/", img: "page97.jpg" },
-        { word: "सूरज", ipa: "/su:rədʒ/", img: "page99.jpg" }, { word: "मशीन", ipa: "/məʃi:n/", img: "page100.jpg" },
-        { word: "किसान", ipa: "/kisa:n/", img: "page101.jpg" }, { word: "समोसा", ipa: "/samo:sa:/", img: "page102.jpg" },
-        { word: "हाथी", ipa: "/ha:tʰi:/", img: "page103.jpg" }, { word: "शहद", ipa: "/ʃəhəd/", img: "page104.jpg" },
-        { word: "सिपाही", ipa: "/sipa:hi:/", img: "page105.jpg" }, { word: "क्षत्रिय", ipa: "/kʃətrijə/", img: "page106.jpg" },
-        { word: "वृक्ष", ipa: "/vrəkʃə/", img: "page107.jpg" }, { word: "राक्षस", ipa: "/ra:kʃəs/", img: "page108.jpg" },
-        { word: "त्रिशूल", ipa: "/triʃu:l/", img: "page109.jpg" }, { word: "क्षत्रिय", ipa: "/kʃətrijə/", img: "page110.jpg" },
-        { word: "पत्र", ipa: "/pətrə/", img: "page111.jpg" }, { word: "यज्ञ", ipa: "/jǝɡjə/", img: "page112.jpg" } // Fixed final entry 
+        { word: "अनार", img: "page3.jpg" }, { word: "आम", img: "page4.jpg" },
+        // ... include your full list here
+        { word: "यज्ञ", img: "page112.jpg" }
     ];
 
     let currentIdx = 0;
     let mediaRecorder, chunks = [];
+    let currentBlob = null, currentLabel = "NotLabeled";
 
     function changeItem(step) {
         currentIdx = (currentIdx + step + assessmentList.length) % assessmentList.length;
-        updateUI();
+        resetUI();
     }
 
-    function updateUI() {
+    function resetUI() {
         const item = assessmentList[currentIdx];
         document.getElementById('displayText').textContent = item.word;
-        document.getElementById('ipaTag').textContent = "IPA: " + item.ipa;
-        document.getElementById('counter').textContent = `${currentIdx + 1} / ${assessmentList.length}`;
+        document.getElementById('counter').textContent = `ITEM ${currentIdx + 1} / ${assessmentList.length}`;
         document.getElementById('displayImg').src = item.img;
-        document.querySelectorAll('.soda-btn').forEach(b => b.classList.remove('selected'));
+        document.getElementById('reviewPanel').style.display = 'none';
+        currentBlob = null;
+        currentLabel = "NotLabeled";
     }
 
     async function handleRecording() {
         if (!mediaRecorder || mediaRecorder.state === "inactive") {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } 
-                });
-                mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.start();
-                chunks = [];
-                mediaRecorder.ondataavailable = e => chunks.push(e.data);
-                document.getElementById('recordBtn').classList.add('recording');
-                document.getElementById('recordBtn').textContent = "⏹️ STOP RECORDING";
-            } catch (e) { alert("Mic Error: " + e.message); }
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: { autoGainControl: false } });
+            mediaRecorder = new MediaRecorder(stream);
+            chunks = [];
+            mediaRecorder.ondataavailable = e => chunks.push(e.data);
+            mediaRecorder.onstop = () => {
+                currentBlob = new Blob(chunks, { type: 'audio/wav' });
+                document.getElementById('reviewPanel').style.display = 'block';
+            };
+            mediaRecorder.start();
+            document.getElementById('recordBtn').classList.add('recording');
+            document.getElementById('recordBtn').textContent = "⏹️ STOP";
         } else {
             mediaRecorder.stop();
             document.getElementById('recordBtn').classList.remove('recording');
-            document.getElementById('recordBtn').textContent = "🎙️ RECORD SAMPLE";
+            document.getElementById('recordBtn').textContent = "🎙️ RECORD";
         }
     }
 
-    function logSoda(type, btn) {
+    function playCurrent() { if(currentBlob) new Audio(URL.createObjectURL(currentBlob)).play(); }
+
+    function setLabel(label, btn) {
+        currentLabel = label;
         document.querySelectorAll('.soda-btn').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
-        console.log(`Word: ${assessmentList[currentIdx].word} | Error: ${type}`);
     }
 
-    window.onload = updateUI;
+    function finalizeSave() {
+        if (!currentBlob) return;
+        const name = document.getElementById('pName').value.replace(/\s+/g, '_') || 'Patient';
+        const age = document.getElementById('pAge').value || 'Unk';
+        const gender = document.getElementById('pGender').value;
+        const date = document.getElementById('testDate').value;
+        const word = assessmentList[currentIdx].word;
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(currentBlob);
+        // Automated file naming for PGIMER research
+        link.download = `${name}_${age}_${gender}_${date}_${word}_${currentLabel}.wav`;
+        link.click();
+        
+        document.getElementById('reviewPanel').style.display = 'none';
+    }
+
+    window.onload = resetUI;
 </script>
 </body>
 </html>

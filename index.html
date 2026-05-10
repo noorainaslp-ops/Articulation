@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Complete Hindi Articulation Battery</title>
+    <title>Hindi Articulation Battery - PGIMER Protocol</title>
     <style>
         :root { --primary: #0284c7; --bg: #f8fafc; --text: #0f172a; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
@@ -12,7 +12,7 @@
         .stimulus-image { max-width: 90%; max-height: 70%; object-fit: contain; }
         .target-word { font-size: 2.5rem; font-weight: 800; margin-top: 10px; color: var(--primary); }
         .nav-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .btn { padding: 12px 18px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; }
+        .btn { padding: 12px 18px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; }
         .btn-record { background: #ef4444; color: white; width: 100%; margin-bottom: 15px; font-size: 1rem; }
         .recording { background: #991b1b; animation: pulse 1.5s infinite; }
         .soda-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; background: #f1f5f9; padding: 12px; border-radius: 16px; }
@@ -30,7 +30,7 @@
     </div>
 
     <div class="stimulus-box">
-        <img id="displayImg" src="page3.jpg" class="stimulus-image">
+        <img id="displayImg" src="page3.jpg" class="stimulus-image" alt="Stimulus">
         <div id="displayText" class="target-word">अनार</div>
     </div>
 
@@ -52,7 +52,7 @@
 </div>
 
 <script>
-    // COMPLETE LIST OF ALL 110 STIMULI FROM THE PDF [cite: 6-204]
+    // COMPLETE LIST OF ALL 110 STIMULI [cite: 6-204]
     const assessmentList = [
         { word: "अनार", ipa: "/ǝna:r/", img: "page3.jpg" }, { word: "आम", ipa: "/a:m/", img: "page4.jpg" },
         { word: "मटर", ipa: "/mətər/", img: "page5.jpg" }, { word: "बस", ipa: "/bəs/", img: "page6.jpg" },
@@ -107,7 +107,7 @@
         { word: "सिपाही", ipa: "/sipa:hi:/", img: "page105.jpg" }, { word: "क्षत्रिय", ipa: "/kʃətrijə/", img: "page106.jpg" },
         { word: "वृक्ष", ipa: "/vrəkʃə/", img: "page107.jpg" }, { word: "राक्षस", ipa: "/ra:kʃəs/", img: "page108.jpg" },
         { word: "त्रिशूल", ipa: "/triʃu:l/", img: "page109.jpg" }, { word: "क्षत्रिय", ipa: "/kʃətrijə/", img: "page110.jpg" },
-        { word: "पत्र", ipa: "/pətrə/", img: "page111.jpg" }, { word: "क्षत्रिय", ipa: "/kʃətrijə/", img: "page112.jpg" }
+        { word: "पत्र", ipa: "/pətrə/", img: "page111.jpg" }, { word: "यज्ञ", ipa: "/jǝɡjə/", img: "page112.jpg" } // Fixed final entry 
     ];
 
     let currentIdx = 0;
@@ -129,13 +129,17 @@
 
     async function handleRecording() {
         if (!mediaRecorder || mediaRecorder.state === "inactive") {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: { autoGainControl: false } });
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.start();
-            chunks = [];
-            mediaRecorder.ondataavailable = e => chunks.push(e.data);
-            document.getElementById('recordBtn').classList.add('recording');
-            document.getElementById('recordBtn').textContent = "⏹️ STOP RECORDING";
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } 
+                });
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.start();
+                chunks = [];
+                mediaRecorder.ondataavailable = e => chunks.push(e.data);
+                document.getElementById('recordBtn').classList.add('recording');
+                document.getElementById('recordBtn').textContent = "⏹️ STOP RECORDING";
+            } catch (e) { alert("Mic Error: " + e.message); }
         } else {
             mediaRecorder.stop();
             document.getElementById('recordBtn').classList.remove('recording');

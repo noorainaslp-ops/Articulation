@@ -3,42 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PGIMER Articulation - Large Stimuli</title>
+    <title>PGIMER Articulation - Fixed Layout</title>
     <style>
         :root { --primary: #0284c7; --bg: #f8fafc; --text: #0f172a; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
         
-        .container { width: 100%; height: 100%; max-width: 800px; background: #fff; display: flex; flex-direction: column; box-sizing: border-box; }
+        /* Force the body to fit the screen exactly */
+        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
-        /* Session Info Bar */
-        .session-info { font-size: 0.8rem; color: #64748b; background: #f1f5f9; padding: 8px; text-align: center; border-bottom: 1px solid #e2e8f0; font-weight: bold; display: none; }
+        .container { display: flex; flex-direction: column; height: 100%; width: 100%; max-width: 600px; margin: 0 auto; background: #fff; position: relative; }
         
-        /* REGISTRATION FORM (Full Screen Overlay for Page 1) */
-        .registration-box { padding: 30px; display: flex; flex-direction: column; justify-content: center; height: 100%; box-sizing: border-box; background: #fff; }
-        .meta-input { width: 100%; padding: 18px; margin: 10px 0; border: 2px solid #cbd5e1; border-radius: 12px; font-size: 1.2rem; }
+        /* Top Info Bar */
+        .session-info { font-size: 0.75rem; color: #64748b; background: #f1f5f9; padding: 5px; text-align: center; border-bottom: 1px solid #e2e8f0; font-weight: bold; height: 25px; line-height: 25px; }
         
-        /* IMAGE STIMULUS CONTAINER - Expanded to 60% of Screen */
-        .stimulus-box { flex: 0 0 60%; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; border-bottom: 2px solid #f1f5f9; }
+        /* STIMULUS AREA: Takes 55% of height */
+        .stimulus-box { flex: 0 0 55%; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid #f1f5f9; }
+        .stimulus-image { width: 100%; height: 100%; object-fit: contain; }
+        .header-card { font-size: 3rem; font-weight: 900; color: #ef4444; text-align: center; padding: 20px; }
+
+        /* REGISTRATION FORM: Scrollable if screen is small */
+        .registration-box { width: 100%; padding: 20px; box-sizing: border-box; overflow-y: auto; display: flex; flex-direction: column; align-items: center; }
+        .meta-input { width: 90%; padding: 12px; margin: 6px 0; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 1rem; }
+
+        /* INTERACTION AREA: Bottom 45% */
+        .interaction-area { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 10px; background: #f8fafc; box-sizing: border-box; }
         
-        /* STIMULUS IMAGE - Maximized Scale */
-        .stimulus-image { width: 100%; height: 100%; object-fit: contain; transform: scale(1.1); /* Slight zoom for impact */ }
+        .target-word { font-size: 2.8rem; font-weight: 900; color: var(--primary); text-align: center; margin: 5px 0; }
         
-        /* WORD & NAV AREA - Bottom 40% */
-        .interaction-area { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; background: #f8fafc; }
-        
-        .target-word { font-size: 3.5rem; font-weight: 900; color: var(--primary); margin: 0; line-height: 1; }
-        .header-card { font-size: 4rem; font-weight: 900; color: #ef4444; text-align: center; }
-        
-        .btn-record { background: #ef4444; color: white; width: 100%; padding: 22px; border-radius: 20px; border: none; font-size: 1.5rem; font-weight: 800; cursor: pointer; }
+        /* FIXED BUTTONS AT BOTTOM */
+        .controls-row { width: 100%; padding-bottom: 5px; }
+        .nav-row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .nav-btn { flex: 1; background: #fff; border: 2px solid #cbd5e1; padding: 12px; border-radius: 12px; font-weight: 800; font-size: 1rem; color: #475569; }
+        .btn-record { background: #ef4444; color: white; width: 100%; padding: 15px; border-radius: 15px; border: none; font-size: 1.2rem; font-weight: 800; cursor: pointer; }
         .recording { background: #991b1b !important; animation: pulse 1.5s infinite; }
-        
-        .nav-row { display: flex; gap: 15px; width: 100%; margin-bottom: 10px; }
-        .nav-btn { flex: 1; background: #fff; border: 2px solid #cbd5e1; padding: 15px; border-radius: 15px; font-weight: 800; font-size: 1.2rem; color: #475569; }
-        
-        /* REVIEW PANEL OVERLAY */
-        .review-panel { position: absolute; bottom: 0; left: 0; right: 0; background: #fff; border-top: 4px solid #10b981; padding: 20px; border-radius: 30px 30px 0 0; display: none; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); z-index: 100; }
-        .soda-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0; }
-        .soda-btn { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 15px; border-radius: 12px; font-size: 1rem; font-weight: 700; text-align: center; }
+
+        /* REVIEW PANEL */
+        .review-panel { position: absolute; bottom: 0; width: 100%; background: #fff; border-top: 4px solid #10b981; padding: 15px; border-radius: 20px 20px 0 0; display: none; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 100; box-sizing: border-box; }
+        .soda-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 10px 0; }
+        .soda-btn { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 12px; border-radius: 10px; font-size: 0.9rem; font-weight: 700; text-align: center; }
         .soda-btn.selected { background: var(--primary); color: white; }
         
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
@@ -47,38 +48,41 @@
 <body>
 
 <div class="container">
-    <div id="sessionDisplay" class="session-info"></div>
+    <div id="sessionDisplay" class="session-info">PGIMER Articulation Battery</div>
     
     <div class="stimulus-box" id="mainDisplay">
         <div id="regForm" class="registration-box">
-            <h1 style="color:var(--primary); margin-bottom:20px;">PATIENT ID</h1>
+            <h2 style="color:var(--primary); margin: 0 0 10px 0;">Patient ID</h2>
             <input type="text" id="pName" class="meta-input" placeholder="Name (Required)">
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="pAge" class="meta-input" placeholder="Age">
-                <select id="pGender" class="meta-input"><option value="M">Male</option><option value="F">Female</option></select>
-            </div>
-            <p style="text-align:center; color:#64748b; font-weight:bold;">Tap NEXT to begin testing.</p>
+            <input type="text" id="pAge" class="meta-input" placeholder="Age (e.g. 5Y)">
+            <select id="pGender" class="meta-input">
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+            </select>
+            <p style="font-size:0.8rem; color:#64748b; margin:10px 0;">Fill details & tap NEXT</p>
         </div>
         
         <img id="displayImg" src="" class="stimulus-image" style="display:none;">
-        <div id="displayText" class="target-word"></div>
+        <div id="displayText" class="header-card"></div>
     </div>
 
-    <div class="interaction-area" id="uiArea" style="display:none;">
-        <div id="counter" style="font-weight:900; color:#94a3b8;">1 / 113</div>
-        <div id="wordLabel" class="target-word">अनार</div>
+    <div class="interaction-area">
+        <div style="text-align:center;">
+            <div id="counter" style="font-weight:900; color:#94a3b8; font-size: 0.8rem;">1 / 113</div>
+            <div id="wordLabel" class="target-word">VOWELS</div>
+        </div>
         
-        <div style="width:100%;">
+        <div class="controls-row">
             <div class="nav-row">
                 <button class="nav-btn" onclick="changeItem(-1)">← PREV</button>
-                <button class="nav-btn" onclick="changeItem(1)">NEXT →</button>
+                <button class="nav-btn" onclick="changeItem(1)" style="border-color: var(--primary); color: var(--primary);">NEXT →</button>
             </div>
-            <button id="recordBtn" class="btn-record" onclick="handleRecording()">🎙️ RECORD</button>
+            <button id="recordBtn" class="btn-record" style="display:none;" onclick="handleRecording()">🎙️ RECORD</button>
         </div>
     </div>
 
     <div id="reviewPanel" class="review-panel">
-        <button class="nav-btn" style="width:100%; background:#0f172a; color:white; padding:18px;" onclick="playCurrent()">▶️ LISTEN</button>
+        <button class="nav-btn" style="width:100%; background:#0f172a; color:white;" onclick="playCurrent()">▶️ LISTEN</button>
         <div class="soda-grid">
             <div class="soda-btn" onclick="setLabel('Normal', this)">Normal</div>
             <div class="soda-btn" onclick="setLabel('Substitution', this)">Substitution</div>
@@ -86,11 +90,12 @@
             <div class="soda-btn" onclick="setLabel('Distortion', this)">Distortion</div>
             <div class="soda-btn" onclick="setLabel('Addition', this)">Addition</div>
         </div>
-        <button class="btn-record" style="background:#10b981; margin:0;" onclick="finalizeSave()">💾 SAVE SAMPLE</button>
+        <button class="btn-record" style="background:#10b981;" onclick="finalizeSave()">💾 SAVE SAMPLE</button>
     </div>
 </div>
 
 <script>
+    // Full Stimuli List
     const assessmentList = [
         { type: "header", word: "VOWELS" },
         { word: "अनार", img: "page3.jpg" }, { word: "आम", img: "page4.jpg" },
@@ -159,11 +164,8 @@
         const name = document.getElementById('pName').value.trim();
         const age = document.getElementById('pAge').value.trim();
         const gender = document.getElementById('pGender').value;
-        const display = document.getElementById('sessionDisplay');
         if (name !== "") {
-            display.style.display = "block";
-            display.textContent = `PATIENT: ${name} (${age || '?'}, ${gender})`;
-            document.getElementById('uiArea').style.display = 'flex';
+            document.getElementById('sessionDisplay').textContent = `PATIENT: ${name} (${age || '?'})`;
             return true;
         }
         return false;
@@ -171,7 +173,7 @@
 
     function changeItem(step) {
         if (step > 0 && currentIdx === 0 && !checkMetadata()) {
-            alert("Please enter Name to begin."); return;
+            alert("Name is required to begin."); return;
         }
         currentIdx = (currentIdx + step + assessmentList.length) % assessmentList.length;
         updateUI();
@@ -181,25 +183,25 @@
         const item = assessmentList[currentIdx];
         const dImg = document.getElementById('displayImg');
         const dTxt = document.getElementById('displayText');
-        const recArea = document.getElementById('recordBtn');
+        const rBtn = document.getElementById('recordBtn');
         const reg = document.getElementById('regForm');
+        const wLbl = document.getElementById('wordLabel');
         
         if (currentIdx === 0) {
             reg.style.display = "flex"; dImg.style.display = "none";
-            dTxt.innerHTML = `<span class="header-card">${item.word}</span>`;
-            recArea.style.display = "none";
+            dTxt.innerHTML = ""; wLbl.textContent = item.word;
+            rBtn.style.display = "none";
         } else if (item.type === "header") {
             reg.style.display = "none"; dImg.style.display = "none";
-            dTxt.innerHTML = `<span class="header-card">${item.word}</span>`;
-            recArea.style.display = "none";
+            dTxt.textContent = item.word; wLbl.textContent = item.word;
+            rBtn.style.display = "none";
         } else {
             reg.style.display = "none"; dImg.style.display = "block"; 
             dImg.src = item.img; dTxt.textContent = ""; 
-            recArea.style.display = "block";
-            document.getElementById('wordLabel').textContent = item.word;
+            wLbl.textContent = item.word; rBtn.style.display = "block";
         }
         
-        document.getElementById('counter').textContent = `ITEM ${currentIdx + 1} / ${assessmentList.length}`;
+        document.getElementById('counter').textContent = `${currentIdx + 1} / ${assessmentList.length}`;
         document.getElementById('reviewPanel').style.display = 'none';
         currentBlob = null; currentLabel = "NotLabeled";
     }

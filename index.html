@@ -3,58 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Articulation - PGIMER ID Mode</title>
+    <title>PGIMER Hindi Articulation Battery</title>
     <style>
         :root { --primary: #0284c7; --bg: #f8fafc; --text: #0f172a; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 450px; background: #fff; padding: 20px; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); box-sizing: border-box; }
         .meta-section { background: #f1f5f9; padding: 15px; border-radius: 18px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         .meta-input { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; box-sizing: border-box; }
-        .row-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .stimulus-box { width: 100%; height: 260px; background: #f8fafc; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 15px; border: 1px dashed #cbd5e1; overflow: hidden; }
         .stimulus-image { max-width: 85%; max-height: 70%; object-fit: contain; }
         .target-word { font-size: 2.3rem; font-weight: 800; margin-top: 10px; color: var(--primary); }
+        .header-card { font-size: 3rem; font-weight: 900; color: #ef4444; text-transform: uppercase; }
         .nav-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .btn { padding: 12px 18px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn-record { background: #ef4444; color: white; width: 100%; font-size: 1rem; margin-bottom: 10px;}
+        .btn { padding: 12px 18px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; }
+        .btn-record { background: #ef4444; color: white; width: 60%; font-size: 1rem; }
         .recording { background: #991b1b !important; animation: pulse 1.5s infinite; }
         .review-panel { background: #f0fdf4; border: 2px solid #10b981; padding: 15px; border-radius: 18px; display: none; }
         .soda-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
         .soda-btn { background: white; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; font-size: 0.85rem; text-align: center; }
         .soda-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
-        .save-btn { background: #10b981; color: white; width: 100%; margin-top: 15px; font-size: 1.1rem; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="meta-section">
-        <span style="font-size: 0.7rem; font-weight: 800; color: #64748b; letter-spacing: 1px;">PATIENT REGISTRATION</span>
-        <input type="text" id="pName" class="meta-input" placeholder="Patient Name (e.g., Amit)">
-        <div class="row-meta">
-            <input type="text" id="pAge" class="meta-input" placeholder="Age (e.g., 5Y)">
-            <select id="pGender" class="meta-input">
-                <option value="M">Male</option>
-                <option value="F">Female</option>
-                <option value="O">Other</option>
-            </select>
+    <div class="meta-section" id="regForm">
+        <span style="font-size: 0.7rem; font-weight: 800; color: #64748b;">PATIENT REGISTRATION</span>
+        <input type="text" id="pName" class="meta-input" placeholder="Name">
+        <div style="display:flex; gap:10px;">
+            <input type="text" id="pAge" class="meta-input" placeholder="Age">
+            <select id="pGender" class="meta-input"><option value="M">M</option><option value="F">F</option></select>
         </div>
-        <input type="date" id="testDate" class="meta-input">
     </div>
 
     <div style="text-align:center; margin-bottom: 10px;">
-        <span id="counter" style="font-weight: 800; color: #64748b; font-size: 0.8rem;">ITEM 1 / 110</span>
+        <span id="counter" style="font-weight: 800; color: #64748b; font-size: 0.8rem;">ITEM 1 / 113</span>
     </div>
 
-    <div class="stimulus-box">
-        <img id="displayImg" src="page3.jpg" class="stimulus-image">
-        <div id="displayText" class="target-word">अनार</div>
+    <div class="stimulus-box" id="stimBox">
+        <img id="displayImg" src="" class="stimulus-image">
+        <div id="displayText" class="target-word"></div>
     </div>
 
     <div class="nav-row">
         <button class="btn" onclick="changeItem(-1)">PREV</button>
-        <button id="recordBtn" class="btn btn-record" style="width: 60%;" onclick="handleRecording()">🎙️ RECORD</button>
+        <button id="recordBtn" class="btn btn-record" onclick="handleRecording()">🎙️ RECORD</button>
         <button class="btn" onclick="changeItem(1)">NEXT</button>
     </div>
 
@@ -67,23 +61,73 @@
             <div class="soda-btn" onclick="setLabel('Distortion', this)">Distortion</div>
             <div class="soda-btn" onclick="setLabel('Addition', this)">Addition</div>
         </div>
-        <button class="btn save-btn" onclick="finalizeSave()">💾 SAVE SAMPLE</button>
+        <button class="btn" style="background:#10b981; color:white; width:100%; margin-top:15px;" onclick="finalizeSave()">💾 SAVE SAMPLE</button>
     </div>
 </div>
 
 <script>
-    // Set default date to today
-    document.getElementById('testDate').valueAsDate = new Date();
-
     const assessmentList = [
+        { type: "header", word: "VOWELS" }, // Page 2 logic [cite: 5]
         { word: "अनार", img: "page3.jpg" }, { word: "आम", img: "page4.jpg" },
-        // ... include your full list here
+        { word: "मटर", img: "page5.jpg" }, { word: "बस", img: "page6.jpg" },
+        { word: "छाता", img: "page7.jpg" }, { word: "इमली", img: "page8.jpg" },
+        { word: "बगीचा", img: "page9.jpg" }, { word: "तकिया", img: "page10.jpg" },
+        { word: "जलेबी", img: "page11.jpg" }, { word: "तीन", img: "page12.jpg" },
+        { word: "उल्लू", img: "page13.jpg" }, { word: "साबुन", img: "page14.jpg" },
+        { word: "कबूतर", img: "page15.jpg" }, { word: "साधु", img: "page16.jpg" },
+        { word: "भालू", img: "page17.jpg" }, { word: "ऊँट", img: "page18.jpg" },
+        { word: "पेड़", img: "page19.jpg" }, { word: "ओखली", img: "page20.jpg" },
+        { word: "गुब्बारे", img: "page21.jpg" }, { word: "समोसा", img: "page22.jpg" },
+        { word: "ऐनक", img: "page23.jpg" }, { word: "कौआ", img: "page24.jpg" },
+        { word: "अंगूर", img: "page25.jpg" }, { word: "खिलौना", img: "page26.jpg" },
+        { word: "पतंग", img: "page27.jpg" },
+        { type: "header", word: "CONSONANTS" }, // Page 28 logic [cite: 56]
+        { word: "कमल", img: "page29.jpg" }, { word: "खरगोश", img: "page30.jpg" },
+        { word: "बकरी", img: "page31.jpg" }, { word: "ओखली", img: "page32.jpg" },
+        { word: "मेंढक", img: "page33.jpg" }, { word: "बत्तख", img: "page34.jpg" },
+        { word: "गाजर", img: "page35.jpg" }, { word: "मगरमच्छ", img: "page36.jpg" },
+        { word: "घाघरा", img: "page37.jpg" }, { word: "पतंग", img: "page38.jpg" },
+        { word: "कंघा", img: "page39.jpg" }, { word: "चप्पल", img: "page40.jpg" },
+        { word: "छाता", img: "page41.jpg" }, { word: "नाचना", img: "page42.jpg" },
+        { word: "मछली", img: "page43.jpg" }, { word: "बच्चा", img: "page44.jpg" },
+        { word: "मगरमच्छ", img: "page45.jpg" }, { word: "जहाज", img: "page46.jpg" },
+        { word: "झंडा", img: "page47.jpg" }, { word: "गाजर", img: "page48.jpg" },
+        { word: "टमाटर", img: "page49.jpg" }, { word: "बटन", img: "page50.jpg" },
+        { word: "ऊँट", img: "page51.jpg" }, { word: "अंगूठी", img: "page52.jpg" },
+        { word: "ठठेरा", img: "page53.jpg" }, { word: "डमरू", img: "page54.jpg" },
+        { word: "मिठाई", img: "page55.jpg" }, { word: "झंडा", img: "page56.jpg" },
+        { word: "ढोलक", img: "page57.jpg" }, { word: "बत्तख", img: "page58.jpg" },
+        { word: "मेंढक", img: "page59.jpg" }, { word: "दांत", img: "page60.jpg" },
+        { word: "तलवार", img: "page61.jpg" }, { word: "थरमस", img: "page62.jpg" },
+        { word: "हथेली", img: "page63.jpg" }, { word: "मदारी", img: "page64.jpg" },
+        { word: "हाथी", img: "page65.jpg" }, { word: "अमरुद", img: "page66.jpg" },
+        { word: "धनुष", img: "page67.jpg" }, { word: "गधा", img: "page68.jpg" },
+        { word: "कान", img: "page69.jpg" }, { word: "नल", img: "page70.jpg" },
+        { word: "पपीता", img: "page71.jpg" }, { word: "ऐनक", img: "page72.jpg" },
+        { word: "चप्पल", img: "page73.jpg" }, { word: "सांप", img: "page74.jpg" },
+        { word: "सोफा", img: "page75.jpg" }, { word: "फूल", img: "page76.jpg" },
+        { word: "बैंगन", img: "page77.jpg" }, { word: "ढफली", img: "page78.jpg" },
+        { word: "कबूतर", img: "page79.jpg" }, { word: "जलेबी", img: "page80.jpg" },
+        { word: "मछली", img: "page81.jpg" }, { word: "भालू", img: "page82.jpg" },
+        { word: "टमाटर", img: "page83.jpg" }, { word: "खम्भा", img: "page84.jpg" },
+        { word: "कलम", img: "page85.jpg" }, { word: "यज्ञ", img: "page86.jpg" },
+        { word: "रेलगाड़ी", img: "page87.jpg" }, { word: "नारियल", img: "page88.jpg" },
+        { word: "खरगोश", img: "page89.jpg" }, { word: "चाय", img: "page90.jpg" },
+        { word: "मटर", img: "page91.jpg" }, { word: "लट्टू", img: "page92.jpg" },
+        { word: "वानर", img: "page93.jpg" }, { word: "कलम", img: "page94.jpg" },
+        { word: "तलवार", img: "page95.jpg" }, { word: "उल्लू", img: "page96.jpg" },
+        { word: "नाव", img: "page97.jpg" }, { word: "सूरज", img: "page99.jpg" },
+        { word: "मशीन", img: "page100.jpg" }, { word: "किसान", img: "page101.jpg" },
+        { word: "समोसा", img: "page102.jpg" }, { word: "हाथी", img: "page103.jpg" },
+        { word: "शहद", img: "page104.jpg" }, { word: "सिपाही", img: "page105.jpg" },
+        { type: "header", word: "BLENDS" }, // Page 106 logic [cite: 106]
+        { word: "क्षत्रिय", img: "page106.jpg" }, { word: "वृक्ष", img: "page107.jpg" },
+        { word: "राक्षस", img: "page108.jpg" }, { word: "त्रिशूल", img: "page109.jpg" },
+        { word: "क्षत्रिय", img: "page110.jpg" }, { word: "पत्र", img: "page111.jpg" },
         { word: "यज्ञ", img: "page112.jpg" }
     ];
 
-    let currentIdx = 0;
-    let mediaRecorder, chunks = [];
-    let currentBlob = null, currentLabel = "NotLabeled";
+    let currentIdx = 0, mediaRecorder, chunks = [], currentBlob = null, currentLabel = "NotLabeled";
 
     function changeItem(step) {
         currentIdx = (currentIdx + step + assessmentList.length) % assessmentList.length;
@@ -92,9 +136,22 @@
 
     function resetUI() {
         const item = assessmentList[currentIdx];
-        document.getElementById('displayText').textContent = item.word;
+        const dispImg = document.getElementById('displayImg');
+        const dispText = document.getElementById('displayText');
+        const recBtn = document.getElementById('recordBtn');
+
+        if (item.type === "header") {
+            dispImg.style.display = "none";
+            dispText.innerHTML = `<span class="header-card">${item.word}</span>`;
+            recBtn.style.display = "none"; // Hide record button for category headers
+        } else {
+            dispImg.style.display = "block";
+            dispImg.src = item.img;
+            dispText.textContent = item.word;
+            recBtn.style.display = "inline-block";
+        }
+        
         document.getElementById('counter').textContent = `ITEM ${currentIdx + 1} / ${assessmentList.length}`;
-        document.getElementById('displayImg').src = item.img;
         document.getElementById('reviewPanel').style.display = 'none';
         currentBlob = null;
         currentLabel = "NotLabeled";
@@ -106,10 +163,7 @@
             mediaRecorder = new MediaRecorder(stream);
             chunks = [];
             mediaRecorder.ondataavailable = e => chunks.push(e.data);
-            mediaRecorder.onstop = () => {
-                currentBlob = new Blob(chunks, { type: 'audio/wav' });
-                document.getElementById('reviewPanel').style.display = 'block';
-            };
+            mediaRecorder.onstop = () => { currentBlob = new Blob(chunks, { type: 'audio/wav' }); document.getElementById('reviewPanel').style.display = 'block'; };
             mediaRecorder.start();
             document.getElementById('recordBtn').classList.add('recording');
             document.getElementById('recordBtn').textContent = "⏹️ STOP";
@@ -121,27 +175,17 @@
     }
 
     function playCurrent() { if(currentBlob) new Audio(URL.createObjectURL(currentBlob)).play(); }
-
-    function setLabel(label, btn) {
-        currentLabel = label;
-        document.querySelectorAll('.soda-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-    }
-
+    function setLabel(label, btn) { currentLabel = label; document.querySelectorAll('.soda-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); }
+    
     function finalizeSave() {
-        if (!currentBlob) return;
         const name = document.getElementById('pName').value.replace(/\s+/g, '_') || 'Patient';
         const age = document.getElementById('pAge').value || 'Unk';
         const gender = document.getElementById('pGender').value;
-        const date = document.getElementById('testDate').value;
         const word = assessmentList[currentIdx].word;
-
         const link = document.createElement('a');
         link.href = URL.createObjectURL(currentBlob);
-        // Automated file naming for PGIMER research
-        link.download = `${name}_${age}_${gender}_${date}_${word}_${currentLabel}.wav`;
+        link.download = `${name}_${age}_${gender}_${word}_${currentLabel}.wav`; // Metadata file naming
         link.click();
-        
         document.getElementById('reviewPanel').style.display = 'none';
     }
 
